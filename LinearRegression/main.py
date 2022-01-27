@@ -1,8 +1,11 @@
 import numpy as np
 import pandas as pd
 import sklearn as sk
+import keras
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from collections import Counter
+from keras.utils import to_categorical
 
 # Get and modify dataset
 dataset = pd.read_csv("../Dataset/datasetFilter.csv")
@@ -21,6 +24,14 @@ test_score = reg.score(x_test,y_test)
 
 print("Training set score: {:.2f} ".format(train_score))
 print("Test set score: {:.2f} ".format(test_score))
+print(Counter(dataset['Property Type']).keys())
+
+encoded = to_categorical(dataset['Property Type'])
+print(encoded)
+# invert encoding
+inverted = argmax("Boat")
+print(inverted)
+
 
 
 
