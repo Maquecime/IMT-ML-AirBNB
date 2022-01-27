@@ -9,6 +9,10 @@ import numpy as np
 import pandas as pd
 import re
 import math
+from numpy import argmax
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+# define example
 
 
 pd.set_option('display.max_columns', None)
@@ -30,15 +34,18 @@ def initDataset():
                       ]
     dataset = dataset[usefullColumns]
     dataset = dataset.rename(columns={'Square Feet': 'Square Meter'})
-    
-    dataset["Square Meter"] = 0
+    dataset = dataset[dataset['Price'].notna()]
+    dataset = dataset[dataset["Neighbourhood"].notna()]#Optionnal
+    dataset = dataset[dataset["Bathrooms"].notna()]#Optionnal
+    dataset = dataset[dataset["Bedrooms"].notna()]#Optionnal
+    dataset = dataset[dataset["Guests Included"].notna()]#Optionnal
     return dataset
     
 def extractNumber(value):
     return float(re.search("^(\d+[\.,]\d|\d+)", value.group(0)).group(0).replace(",", "."))
 
 def calculSquareMeter(dataset):
-    
+    dataset["Square Meter"] = 0
     columnForSquareMeter = ["Name", "Summary", "Description", "Space"]
     formatSquareMeter = ["(\d+[\.,]\d|\d+) *[mM][2²]\D", "(\d+[\.,]\d|\d+) mètres carrés", "(\d+[\.,]\d|\d+) metres carres", "(\d+[\.,]\d|\d+) square meter", 
                          "(\d+[\.,]\d|\d+) square meter", "(\d+[\.,]\d|\d+) mètres carré", "(\d+[\.,]\d|\d+) metres carre",  "(\d+[\.,]\d|\d+)+mcarré", 
@@ -104,22 +111,55 @@ def calculAmenitiesScore(dataset):
         
     return newDataset
 
+def calculAmenities(dataset):
+    amenitiesList = ["Internet", "Air conditioning", "Breakfast", "TV", "Bathub", "Dryer", "Elevator in building", "Parking",
+                 "Gym", "Heating", "Kitchen", "Pets allowed", "Pool", "Smoking allowed", "Washer", "Wheelchair accessible"]
+    for amenities in amenitiesList:
+        dataset[amenities] = 0
+    for index, row in dataset.iterrows():
+            for amenities in amenitiesList:
+                if amenities in str(row["Amenities"]):
+                    dataset.loc[index, amenities] = 1
+    return dataset
+
+
+
+def oneHotEncode(data):
+    values = np.array(data)
+    label_encoder = LabelEncoder()
+    integer_encoded = label_encoder.fit_transform(values)
+    onehot_encoder = OneHotEncoder(sparse=False)
+    integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
+    onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
+    return onehot_encoded
+
+
+def oneHotDecode(data):
+    return label_encoder.inverse_transform([argmax(data)])
+
+def createEncodeColonne(dataset, colonne_name):
+    encodedCol = np.array(oneHotEncode(dataset[colonne_name]))
+    newColonne = [colonne_name + " " + str(i) for i in range(len(encodedCol[0]))]
+    df = pd.DataFrame(encodedCol, columns=newColonne)
+    return pd.concat([dataset.reset_index(drop=True), df], axis=1)
+
 def main():
     dataset = initDataset()
     dataset = calculSquareMeter(dataset)
     newDataset = dataset[(dataset["Square Meter"] != 0) & 
                          (dataset["Square Meter"] > 10) & 
-                         (dataset["Square Meter"] < 900)].copy()
-    newDataset = calculAmenitiesScore(dataset)
-    newDataset.to_csv(path_or_buf="C:/Users/lele8/OneDrive/Bureau/EMA/Année 2/Machine Learning/Projet/Dataset/datasetFilter.csv")
-
-main()
-
-
-
-
+                        (dataset["Square Meter"] < 900)].copy()
+    #newDataset = calculAmenitiesScore(dataset)
+    newDataset = calculAmenities(newDataset)
+    newDataset = createEncodeColonne(newDataset, "Neighbourhood")
+    newDataset = createEncodeColonne(newDataset, "Property Type")
+    newDataset = createEncodeColonne(newDataset, "Room Type")
+    newDataset = createEncodeColonne(newDataset, "Bed Type")
 
 
+    
+    newDataset.to_csv(path_or_buf="Dataset/datasetFilter.csv")
+    return newDataset
+newDataset = main()
 
-#print(tmpDataset.loc[tmpDataset["ID"] == 25819, "Description"].values)
 
