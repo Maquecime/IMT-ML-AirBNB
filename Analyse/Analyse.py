@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-dataset = pd.read_csv("C:/Users/lele8/OneDrive/Bureau/EMA/Année 2/Machine Learning/Projet/Dataset/datasetFilter.csv", 
+dataset = pd.read_csv("../Dataset/datasetFilter.csv", 
                       dtype={'Zipcode': "string", 'License': "string"})
 
 amenitiesList = ["Internet", "Air conditioning", "Breakfast", "TV", "Bathub", "Dryer", "Elevator in building", "Parking",
