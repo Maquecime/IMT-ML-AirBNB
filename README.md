@@ -12,8 +12,8 @@ This problematic is rooted in the regression problem, with a continuous predicti
 
 ### Code structure explaination
 
-main.py             -> script to train and test several models using cross validation
-utils.py            -> useful function for our work
-Sorting/SortData.py -> script to filter the original dataset to the dataset use to train our models
-DataSet             -> location of the original dataset and our dataset rework
-Analyse/Analyse.py  -> script to generate plot for analysing our dataset
+main.py             -> script to train and test several models using cross validation.
+utils.py            -> useful function for our work.
+Sorting/SortData.py -> script to filter the original dataset to the dataset use to train our models.
+DataSet             -> location of the original dataset and our dataset rework.
+Analyse/Analyse.py  -> script to generate plot for analysing our dataset.
