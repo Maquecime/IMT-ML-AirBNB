@@ -35,7 +35,7 @@ def initDataset():
     dataset = dataset[usefullColumns]
     dataset = dataset.rename(columns={'Square Feet': 'Square Meter'})
     dataset = dataset[dataset['Price'].notna()]
-    dataset = dataset[dataset["Neighbourhood Cleansed"].notna()]#Optionnal
+    dataset = dataset[dataset["Neighbourhood"].notna()]#Optionnal
     dataset = dataset[dataset["Bathrooms"].notna()]#Optionnal
     dataset = dataset[dataset["Bedrooms"].notna()]#Optionnal
     dataset = dataset[dataset["Guests Included"].notna()]#Optionnal
@@ -151,7 +151,7 @@ def main():
                         (dataset["Square Meter"] < 900)].copy()
     #newDataset = calculAmenitiesScore(dataset)
     newDataset = calculAmenities(newDataset)
-    newDataset = createEncodeColonne(newDataset, "Neighbourhood Cleansed")
+    newDataset = createEncodeColonne(newDataset, "Neighbourhood")
     newDataset = createEncodeColonne(newDataset, "Property Type")
     newDataset = createEncodeColonne(newDataset, "Room Type")
     newDataset = createEncodeColonne(newDataset, "Bed Type")

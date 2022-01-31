@@ -15,6 +15,7 @@ def getColEncoded(name, dataset):
 
 def GetDataSet(path):
     dataset = pd.read_csv(path, dtype={'Zipcode': "string"})
+    dataset = dataset[dataset["Review Scores Value"].notna()]
     
     neiColEncodedNeighbourhood = getColEncoded("Neighbourhood", dataset)
     neiColEncodedPropertyType = getColEncoded("Property Type", dataset)
@@ -25,14 +26,14 @@ def GetDataSet(path):
                     ["Accommodates"] +
                     ["Bathrooms"] +
                     ["Bedrooms"] +
-                    ["Guests Included"] +
+                    ["Review Scores Value"] +
                     amenitiesList +
                     neiColEncodedNeighbourhood +
                     neiColEncodedPropertyType +
                     neiColEncodedRoomType +
                     neiColEncodedBedType].values
     
-    Y = dataset['Price']
+    y = dataset['Price']
     
-    return X,Y
+    return X, y, dataset
     
